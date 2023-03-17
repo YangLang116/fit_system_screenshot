@@ -1,4 +1,4 @@
-package android.src.main.java.com.xtu.flutter.fit.fit_system_screenshot;
+package com.xtu.flutter.fit.fit_system_screenshot;
 
 import android.app.Activity;
 import android.util.Log;
@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodChannel;
 
@@ -27,7 +26,7 @@ public class FitScreenShotHelper implements MethodChannel.Result {
 
     public void install(@NonNull Activity activity) {
         Log.d(TAG, "install");
-        FitScreenShotScrollView scrollView = new FitScreenShotScrollView(activity);
+        FitScreenShotScrollView scrollView = new com.xtu.flutter.fit.fit_system_screenshot.FitScreenShotScrollView(activity);
         Map<String, Double> params = new HashMap<>();
         scrollView.setScrollViewListener((delta) -> {
             if (methodChannel == null) return;
@@ -42,10 +41,9 @@ public class FitScreenShotHelper implements MethodChannel.Result {
         decorView.addView(noTouchLayout, getLayoutParams());
     }
 
-    public void attachToEngine(@NonNull FlutterEngine flutterEngine) {
+    public void attachToEngine(@NonNull BinaryMessenger messenger) {
         Log.d(TAG, "attachToEngine");
-        BinaryMessenger binaryMessenger = flutterEngine.getDartExecutor().getBinaryMessenger();
-        this.methodChannel = new MethodChannel(binaryMessenger, METHOD_CHANNEL_NAME);
+        this.methodChannel = new MethodChannel(messenger, METHOD_CHANNEL_NAME);
     }
 
     private static ViewGroup.LayoutParams getLayoutParams() {

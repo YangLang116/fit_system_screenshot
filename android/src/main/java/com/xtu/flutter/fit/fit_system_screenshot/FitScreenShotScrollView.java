@@ -1,4 +1,4 @@
-package android.src.main.java.com.xtu.flutter.fit.fit_system_screenshot;
+package com.xtu.flutter.fit.fit_system_screenshot;
 
 import android.content.Context;
 import android.util.DisplayMetrics;

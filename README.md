@@ -2,14 +2,15 @@
 
 让Flutter应用适配安卓系统的长截图
 
-## Getting Started
+## 使用
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/developing-packages/),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
+1、在需要支持长截屏的页面设置 `scrollController` ，保证系统在截屏时自动滚动内容
+```dart
+  screenShotHelper.attach(scrollController);
+```
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+2、当支持长截屏的页面退出时，释放对象
+```dart
+screenShotHelper.detach();
+```
 
