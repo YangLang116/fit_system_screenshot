@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:fit_system_screenshot/fit_screenshot_helper.dart';
+import 'package:fit_system_screenshot/fit_system_screenshot.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -36,13 +36,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    screenShotHelper.attach(scrollController);
+    fitSystemScreenshot.attach(scrollController);
     super.initState();
   }
 
   @override
   void dispose() {
-    screenShotHelper.detach();
+    fitSystemScreenshot.detach();
     this.scrollController.dispose();
     super.dispose();
   }

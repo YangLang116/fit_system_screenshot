@@ -3,11 +3,11 @@ import 'package:flutter/services.dart';
 
 const String _METHOD_CHANNEL_NAME = 'fit.system.screenshot';
 
-class _FitScreenShotHelper {
+class _FitSystemScreenshot {
   late MethodChannel methodChannel;
   ScrollController? scrollController;
 
-  _FitScreenShotHelper() {
+  _FitSystemScreenshot() {
     this.methodChannel = MethodChannel(_METHOD_CHANNEL_NAME);
     this.methodChannel.setMethodCallHandler((call) {
       if (scrollController == null) return Future.value('');
@@ -30,4 +30,4 @@ class _FitScreenShotHelper {
   }
 }
 
-_FitScreenShotHelper screenShotHelper = _FitScreenShotHelper();
+_FitSystemScreenshot fitSystemScreenshot = _FitSystemScreenshot();
