@@ -1,6 +1,8 @@
 package com.xtu.flutter.fit.fit_system_screenshot;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -51,7 +53,7 @@ public class FitScreenShotHelper implements MethodChannel.Result {
             if (this.scrollView == null) return;
             String methodName = call.method;
             Log.d(TAG, "onMethodCall: " + methodName);
-            if (methodName.equals("updateScrollArea")) {
+            if (TextUtils.equals("updateScrollArea", methodName)) {
                 final Map<String, Integer> args = (Map<String, Integer>) call.arguments;
                 FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) scrollView.getLayoutParams();
                 layoutParams.topMargin = args.get("top");
@@ -59,6 +61,10 @@ public class FitScreenShotHelper implements MethodChannel.Result {
                 layoutParams.width = args.get("width");
                 layoutParams.height = args.get("height");
                 scrollView.setLayoutParams(layoutParams);
+            } else if (TextUtils.equals("setDebug", methodName)) {
+                final Map<String, Boolean> args = (Map<String, Boolean>) call.arguments;
+                boolean isDebug = args.get("isDebug");
+                scrollView.setBackgroundColor(isDebug ? Color.parseColor("#ECECECEC") : Color.TRANSPARENT);
             }
         });
     }

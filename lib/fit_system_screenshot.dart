@@ -14,8 +14,8 @@ class _FitSystemScreenshot {
     this._methodChannel.setMethodCallHandler((call) {
       if (_scrollController == null) return Future.value(false);
       String methodName = call.method;
-      Map args = call.arguments;
       if (methodName == 'scroll') {
+        Map args = call.arguments;
         double delta = args['delta']!;
         double radio = window.devicePixelRatio;
         _scrollController!.jumpTo(_scrollController!.offset + delta / radio);
@@ -40,6 +40,10 @@ class _FitSystemScreenshot {
 
   void detach() {
     this._scrollController = null;
+  }
+
+  void setDebug(bool isDebug) {
+    _methodChannel.invokeMethod('setDebug', {'isDebug': isDebug});
   }
 }
 

@@ -38,6 +38,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    //打开长截屏调试
+    fitSystemScreenshot.setDebug(false);
     //1、长截屏的页面绑定控制器
     fitSystemScreenshot.attach(scrollController);
     super.initState();
