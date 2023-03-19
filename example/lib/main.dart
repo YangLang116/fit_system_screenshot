@@ -1,5 +1,7 @@
 import 'dart:developer';
+import 'dart:ui';
 
+import 'package:fit_system_screenshot/after_layout.dart';
 import 'package:fit_system_screenshot/fit_system_screenshot.dart';
 import 'package:flutter/material.dart';
 
@@ -53,7 +55,28 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: ListView.builder(
+      body: Column(
+        children: [
+          buildText(),
+          Expanded(child: buildListWidget()),
+        ],
+      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+
+  Widget buildText() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10),
+      child: Text('测试列表控件'),
+    );
+  }
+
+  Widget buildListWidget() {
+    return AfterLayout(
+      callback: (render) {
+        fitSystemScreenshot.updateScrollArea(render.rect);
+      },
+      child: ListView.builder(
         controller: scrollController,
         itemCount: 10,
         itemBuilder: (context, index) {
@@ -79,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           );
         },
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }

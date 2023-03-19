@@ -18,6 +18,7 @@ public class FitSystemScreenshotPlugin implements FlutterPlugin, ActivityAware {
 
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+        FitScreenShotHelper.getInstance().detachToEngine();
     }
 
     @Override

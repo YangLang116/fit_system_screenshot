@@ -33,7 +33,7 @@ public class FitScreenShotScrollView extends ScrollView {
         //判断是否下滑 && 防止跳跃(oldT > 0)
         if (scrollViewListener != null && t - oldT > 0 && oldT > 0) {
             //0.25(滑动阻尼系数)解决原生与Flutter滑动不同步问题
-            scrollViewListener.onScroll((t - oldT) * 0.25);
+            scrollViewListener.onScroll(t - oldT);
         }
         //无限滑动
         fixScrollPosition(t);

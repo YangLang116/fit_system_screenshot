@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
@@ -15,14 +17,25 @@ class _FitSystemScreenshot {
       Map args = call.arguments;
       if (methodName == 'scroll') {
         double delta = args['delta']!;
-        _scrollController!.jumpTo(_scrollController!.offset + delta);
+        double radio = window.devicePixelRatio;
+        _scrollController!.jumpTo(_scrollController!.offset + delta / radio);
       }
-      return Future.value("");
+      return Future.value(true);
     });
   }
 
   void attach(ScrollController scrollController) {
     this._scrollController = scrollController;
+  }
+
+  void updateScrollArea(Rect scrollArea) {
+    double radio = window.devicePixelRatio;
+    int top = (scrollArea.top * radio).toInt();
+    int left = (scrollArea.left * radio).toInt();
+    int width = (scrollArea.width * radio).toInt();
+    int height = (scrollArea.height * radio).toInt();
+    _methodChannel.invokeMethod('updateScrollArea',
+        {'top': top, 'left': left, 'width': width, 'height': height});
   }
 
   void detach() {
