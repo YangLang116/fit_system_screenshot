@@ -38,12 +38,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    //1、长截屏的页面绑定控制器
     fitSystemScreenshot.attach(scrollController);
     super.initState();
   }
 
   @override
   void dispose() {
+    //3、释放对象
     fitSystemScreenshot.detach();
     this.scrollController.dispose();
     super.dispose();
@@ -72,6 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget buildListWidget() {
+    //2、指定滚动区域
     return AfterLayout(
       callback: (render) {
         fitSystemScreenshot.updateScrollArea(render.rect);

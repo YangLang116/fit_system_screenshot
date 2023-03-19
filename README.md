@@ -9,7 +9,17 @@
   screenShotHelper.attach(scrollController);
 ```
 
-2、当支持长截屏的页面退出时，释放对象
+2、指定滚动区域
+```dart
+  AfterLayout(
+    callback: (render) {
+      fitSystemScreenshot.updateScrollArea(render.rect);
+    },
+    child: ListView.builder(...)
+  )
+```
+
+3、当支持长截屏的页面退出时，释放对象
 ```dart
 screenShotHelper.detach();
 ```
