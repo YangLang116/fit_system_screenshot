@@ -12,7 +12,7 @@ class _FitSystemScreenshot {
   _FitSystemScreenshot() {
     this._methodChannel = MethodChannel(_METHOD_CHANNEL_NAME);
     this._methodChannel.setMethodCallHandler((call) {
-      if (_scrollController == null) return Future.value('');
+      if (_scrollController == null) return Future.value(false);
       String methodName = call.method;
       Map args = call.arguments;
       if (methodName == 'scroll') {
