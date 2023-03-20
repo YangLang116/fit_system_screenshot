@@ -1,4 +1,5 @@
 import 'package:fit_system_screenshot_example/case/basic_usage_page.dart';
+import 'package:fit_system_screenshot_example/case/nest_scroll_usage_page.dart';
 import 'package:fit_system_screenshot_example/case/widget_usage_page.dart';
 import 'package:flutter/material.dart';
 import 'package:lifecycle/lifecycle.dart';
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
         'home': (context) => DisplayPage(),
         'basic_usage_page': (context) => BasicUsagePage(),
         'widget_usage_page': (context) => WidgetUsagePage(),
+        'nest_scroll_usage_page': (context) => NestScrollUsagePage(),
       },
     );
   }
@@ -46,6 +48,15 @@ class DisplayPage extends StatelessWidget {
               },
               child: Text(
                 'FitSystemScreenshotWidget Usage',
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pushNamed(context, 'nest_scroll_usage_page');
+              },
+              child: Text(
+                'NestedScrollView Usage',
                 style: TextStyle(fontSize: 18),
               ),
             )
