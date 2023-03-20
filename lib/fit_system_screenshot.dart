@@ -41,10 +41,6 @@ class _FitSystemScreenshot {
   void detach() {
     this._scrollController = null;
   }
-
-  void setDebug(bool isDebug) {
-    _methodChannel.invokeMethod('setDebug', {'isDebug': isDebug});
-  }
 }
 
 _FitSystemScreenshot fitSystemScreenshot = _FitSystemScreenshot();

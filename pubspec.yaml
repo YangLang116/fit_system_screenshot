@@ -1,6 +1,6 @@
 name: fit_system_screenshot
 description: 让Flutter应用适配安卓系统的长截图
-version: 1.0.2
+version: 1.0.3
 homepage: https://github.com/YangLang116/fit_system_screenshot
 
 environment:

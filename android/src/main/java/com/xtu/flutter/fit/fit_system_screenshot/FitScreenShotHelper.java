@@ -1,7 +1,6 @@
 package com.xtu.flutter.fit.fit_system_screenshot;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -21,7 +20,8 @@ public class FitScreenShotHelper implements MethodChannel.Result {
     private static final String METHOD_CHANNEL_NAME = "fit.system.screenshot";
 
     private MethodChannel methodChannel;
-    private FitScreenShotScrollView scrollView;
+    private ViewGroup noTouchLayout;
+
     private static final FitScreenShotHelper sInstance = new FitScreenShotHelper();
 
     public static FitScreenShotHelper getInstance() {
@@ -30,9 +30,9 @@ public class FitScreenShotHelper implements MethodChannel.Result {
 
     public void install(@NonNull Activity activity) {
         Log.d(TAG, "install");
-        this.scrollView = new FitScreenShotScrollView(activity);
+        FitScreenShotScrollView scrollView = new FitScreenShotScrollView(activity);
         final Map<String, Double> params = new HashMap<>();
-        this.scrollView.setScrollViewListener((delta) -> {
+        scrollView.setScrollViewListener((delta) -> {
             if (this.methodChannel == null) return;
             params.put("delta", delta);
             this.methodChannel.invokeMethod("scroll", params, this);
@@ -40,8 +40,8 @@ public class FitScreenShotHelper implements MethodChannel.Result {
         Window window = activity.getWindow();
         ViewGroup decorView = ((ViewGroup) window.getDecorView());
         //禁用触摸事件
-        FitScreenShotNoTouchLayout noTouchLayout = new FitScreenShotNoTouchLayout(activity);
-        noTouchLayout.addView(this.scrollView, getLayoutParams());
+        this.noTouchLayout = new FitScreenShotNoTouchLayout(activity);
+        this.noTouchLayout.addView(scrollView, getLayoutParams());
         decorView.addView(noTouchLayout, getLayoutParams());
     }
 
@@ -50,21 +50,17 @@ public class FitScreenShotHelper implements MethodChannel.Result {
         Log.d(TAG, "attachToEngine");
         this.methodChannel = new MethodChannel(messenger, METHOD_CHANNEL_NAME);
         this.methodChannel.setMethodCallHandler((call, result) -> {
-            if (this.scrollView == null) return;
+            if (this.noTouchLayout == null) return;
             String methodName = call.method;
             Log.d(TAG, "onMethodCall: " + methodName);
             if (TextUtils.equals("updateScrollArea", methodName)) {
                 final Map<String, Integer> args = (Map<String, Integer>) call.arguments;
-                FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) scrollView.getLayoutParams();
+                FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) noTouchLayout.getLayoutParams();
                 layoutParams.topMargin = args.get("top");
                 layoutParams.leftMargin = args.get("left");
                 layoutParams.width = args.get("width");
                 layoutParams.height = args.get("height");
-                scrollView.setLayoutParams(layoutParams);
-            } else if (TextUtils.equals("setDebug", methodName)) {
-                final Map<String, Boolean> args = (Map<String, Boolean>) call.arguments;
-                boolean isDebug = args.get("isDebug");
-                scrollView.setBackgroundColor(isDebug ? Color.parseColor("#ECECECEC") : Color.TRANSPARENT);
+                noTouchLayout.setLayoutParams(layoutParams);
             }
         });
     }
