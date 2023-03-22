@@ -2,6 +2,7 @@ package com.xtu.flutter.fit.fit_system_screenshot;
 
 import android.content.Context;
 import android.util.DisplayMetrics;
+import android.view.MotionEvent;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -19,12 +20,20 @@ public class FitScreenShotScrollView extends ScrollView {
         TextView contentView = new TextView(context);
         contentView.setWidth(screenWidth);
         //让控件支持滑动
-        contentView.setHeight((int) (screenHeight * 1.5));
+        contentView.setHeight(screenHeight * 10);
         addView(contentView);
     }
 
     public void setScrollViewListener(ScrollListener scrollViewListener) {
         this.scrollViewListener = scrollViewListener;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            scrollTo(0, 0);
+        }
+        return super.onTouchEvent(ev);
     }
 
     @Override
@@ -40,7 +49,7 @@ public class FitScreenShotScrollView extends ScrollView {
     }
 
     private void fixScrollPosition(int t) {
-        if (t >= screenHeight * 0.3) scrollTo(0, 0);
+        if (t >= screenHeight * 8.5) scrollTo(0, 0);
     }
 
     public interface ScrollListener {
