@@ -1,3 +1,4 @@
+import 'package:fit_system_screenshot/fit_system_screenshot.dart';
 import 'package:fit_system_screenshot_example/case/basic_usage_page.dart';
 import 'package:fit_system_screenshot_example/case/custom_scroll_usage_page.dart';
 import 'package:fit_system_screenshot_example/case/nest_scroll_usage_page.dart';
@@ -8,8 +9,25 @@ import 'package:lifecycle/lifecycle.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    fitSystemScreenshot.init();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    fitSystemScreenshot.release();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

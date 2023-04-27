@@ -2,11 +2,22 @@
 
 让Flutter应用适配安卓系统的长截图
 
+## 安装与卸载
+1、初始化截屏库
+```dart
+fitSystemScreenshot.init()
+```
+
+2、卸载截屏库
+```dart
+fitSystemScreenshot.release()
+```
+
 ## 基础使用(参考Demo中的Basic Usage)
 
 1、在需要支持长截屏的页面设置 `scrollController` ，保证系统在截屏时自动滚动内容
 ```dart
-  screenShotHelper.attach(scrollController);
+  fitSystemScreenshot.attach(scrollController);
 ```
 
 2、指定滚动区域
@@ -16,7 +27,7 @@
 
 3、当支持长截屏的页面退出时，释放对象
 ```dart
-  screenShotHelper.detach();
+  fitSystemScreenshot.detach();
 ```
 
 

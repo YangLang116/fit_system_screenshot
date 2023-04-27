@@ -6,20 +6,25 @@ import android.util.Log;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.FrameLayout;
+
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodChannel;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class FitScreenShotHelper implements MethodChannel.Result {
+import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.common.EventChannel;
+import io.flutter.plugin.common.MethodChannel;
+
+public class FitScreenShotHelper {
 
     private static final String TAG = "FitScreenShotHelper";
-    private static final String METHOD_CHANNEL_NAME = "fit.system.screenshot";
+    private static final String METHOD_CHANNEL_NAME = "fit.system.screenshot.method";
+    private static final String EVENT_CHANNEL_NAME = "fit.system.screenshot.event";
 
     private MethodChannel methodChannel;
+    private EventChannel eventChannel;
+    private EventChannel.EventSink eventSink;
     private ViewGroup noTouchLayout;
 
     private static final FitScreenShotHelper sInstance = new FitScreenShotHelper();
@@ -33,9 +38,9 @@ public class FitScreenShotHelper implements MethodChannel.Result {
         FitScreenShotScrollView scrollView = new FitScreenShotScrollView(activity);
         final Map<String, Double> params = new HashMap<>();
         scrollView.setScrollViewListener((delta) -> {
-            if (this.methodChannel == null) return;
+            if (this.eventSink == null) return;
             params.put("delta", delta);
-            this.methodChannel.invokeMethod("scroll", params, this);
+            this.eventSink.success(params);
         });
         Window window = activity.getWindow();
         ViewGroup decorView = ((ViewGroup) window.getDecorView());
@@ -61,6 +66,20 @@ public class FitScreenShotHelper implements MethodChannel.Result {
                 layoutParams.width = args.get("width");
                 layoutParams.height = args.get("height");
                 noTouchLayout.setLayoutParams(layoutParams);
+                result.success(true);
+            }
+        });
+        this.eventChannel = new EventChannel(messenger, EVENT_CHANNEL_NAME);
+        this.eventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink sink) {
+                Log.d(TAG, "setStreamHandler onListen");
+                eventSink = sink;
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                Log.d(TAG, "setStreamHandler onCancel");
             }
         });
     }
@@ -68,24 +87,12 @@ public class FitScreenShotHelper implements MethodChannel.Result {
     public void detachToEngine() {
         Log.d(TAG, "detachToEngine");
         this.methodChannel.setMethodCallHandler(null);
+        this.eventChannel.setStreamHandler(null);
+        this.eventSink.endOfStream();
     }
 
     private static FrameLayout.LayoutParams getLayoutParams() {
         return new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
     }
 
-    @Override
-    public void success(@Nullable Object o) {
-        Log.d(TAG, String.format("MethodChannel success: %s", o));
-    }
-
-    @Override
-    public void error(String s, @Nullable String s1, @Nullable Object o) {
-        Log.d(TAG, String.format("MethodChannel error: %s %s", s, s1));
-    }
-
-    @Override
-    public void notImplemented() {
-        Log.d(TAG, "MethodChannel notImplemented");
-    }
 }
