@@ -1,11 +1,10 @@
 import 'package:fit_system_screenshot/fit_system_screenshot.dart';
-import 'package:fit_system_screenshot_example/case/basic_usage_page.dart';
+import 'package:fit_system_screenshot_example/case/column_usage_page.dart';
 import 'package:fit_system_screenshot_example/case/custom_scroll_usage_page.dart';
+import 'package:fit_system_screenshot_example/case/list_usage_page.dart';
 import 'package:fit_system_screenshot_example/case/nest_scroll_usage_page.dart';
 import 'package:fit_system_screenshot_example/case/tab_usage_page.dart';
-import 'package:fit_system_screenshot_example/case/widget_usage_page.dart';
 import 'package:flutter/material.dart';
-import 'package:lifecycle/lifecycle.dart';
 
 void main() => runApp(MyApp());
 
@@ -19,12 +18,14 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
+    //1、初始化长截屏
     fitSystemScreenshot.init();
     super.initState();
   }
 
   @override
   void dispose() {
+    //2、释放长截屏
     fitSystemScreenshot.release();
     super.dispose();
   }
@@ -33,12 +34,11 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(primarySwatch: Colors.blue),
-      navigatorObservers: [defaultLifecycleObserver],
       initialRoute: 'home',
       routes: {
         'home': (context) => DisplayPage(),
-        'basic_usage_page': (context) => BasicUsagePage(),
-        'widget_usage_page': (context) => WidgetUsagePage(),
+        'column_usage_page': (context) => ColumnUsagePage(),
+        'list_usage_page': (context) => ListUsagePage(),
         'nest_scroll_usage_page': (context) => NestScrollUsagePage(),
         'custom_scroll_usage_page': (context) => CustomScrollUsagePage(),
         'tab_usage_page': (context) => TabUsagePage(),
@@ -60,16 +60,16 @@ class DisplayPage extends StatelessWidget {
           children: [
             TextButton(
               onPressed: () {
-                Navigator.pushNamed(context, 'basic_usage_page');
+                Navigator.pushNamed(context, 'column_usage_page');
               },
-              child: Text('Basic Usage', style: TextStyle(fontSize: 18)),
+              child: Text('Column Usage', style: TextStyle(fontSize: 18)),
             ),
             TextButton(
               onPressed: () {
-                Navigator.pushNamed(context, 'widget_usage_page');
+                Navigator.pushNamed(context, 'list_usage_page');
               },
               child: Text(
-                'FitSystemScreenshotWidget Usage',
+                'List Usage',
                 style: TextStyle(fontSize: 18),
               ),
             ),

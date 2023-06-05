@@ -1,6 +1,7 @@
-import 'package:fit_system_screenshot/fit_system_screenshot_widget.dart';
+import 'package:fit_system_screenshot/fit_system_screenshot.dart';
+import 'package:fit_system_screenshot_example/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:lifecycle/lifecycle.dart';
+import 'package:flutter/scheduler.dart';
 
 class TabUsagePage extends StatefulWidget {
   const TabUsagePage({Key? key}) : super(key: key);
@@ -9,22 +10,49 @@ class TabUsagePage extends StatefulWidget {
   State<TabUsagePage> createState() => _TabUsagePageState();
 }
 
-class _TabUsagePageState extends State<TabUsagePage>
-    with LifecycleAware, LifecycleMixin {
+class _TabUsagePageState extends State<TabUsagePage> {
   int index = 0;
-  final List<ScrollController> tabControllerList = [
+  List<int> tabItemCountList = [10, 15];
+  double itemHeight = 120;
+
+  Dispose? screenShotDispose;
+  final List<GlobalKey> scrollAreaKeyList = [GlobalKey(), GlobalKey()];
+  final List<ScrollController> scrollControllerList = [
     ScrollController(),
     ScrollController()
   ];
-  final List<GlobalKey<FitSystemScreenshotWidgetState>> shotKeyList = [
-    GlobalKey(),
-    GlobalKey()
-  ];
+
+  @override
+  void initState() {
+    attachScreenShot(0);
+    super.initState();
+  }
+
+  void attachScreenShot(double offset) {
+    screenShotDispose?.call();
+    screenShotDispose = fitSystemScreenshot.attachToPage(
+        scrollAreaKeyList[index], scrollControllerList[index], (offset) {
+      scrollControllerList[index].jumpTo(offset);
+    });
+    SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
+      fitSystemScreenshot
+          .updateScrollLength(tabItemCountList[index] * itemHeight);
+      fitSystemScreenshot.updateScrollPosition(offset);
+    });
+  }
 
   @override
   void dispose() {
-    tabControllerList.forEach((controller) => controller.dispose());
+    screenShotDispose?.call();
+    scrollControllerList.forEach((controller) => controller.dispose());
     super.dispose();
+  }
+
+  void changeTab(int index) {
+    setState(() {
+      this.index = index;
+    });
+    attachScreenShot(scrollControllerList[index].offset);
   }
 
   @override
@@ -34,18 +62,27 @@ class _TabUsagePageState extends State<TabUsagePage>
       body: IndexedStack(
         index: index,
         children: [
-          buildList('First List', shotKeyList[0], tabControllerList[0]),
-          buildList('Second List', shotKeyList[1], tabControllerList[1]),
+          buildList(
+            scrollAreaKeyList[0],
+            tabItemCountList[0],
+            scrollControllerList[0],
+          ),
+          buildList(
+            scrollAreaKeyList[1],
+            tabItemCountList[1],
+            scrollControllerList[1],
+            headWidget: Container(
+              height: 80,
+              color: Colors.blueGrey,
+              alignment: Alignment.center,
+              child: Text('Head'),
+            ),
+          )
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: index,
-        onTap: (index) {
-          setState(() {
-            this.index = index;
-          });
-          attachController();
-        },
+        onTap: changeTab,
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -60,37 +97,31 @@ class _TabUsagePageState extends State<TabUsagePage>
     );
   }
 
-  Widget buildList(String title, GlobalKey key, ScrollController controller) {
+  Widget buildList(GlobalKey key, int itemCount, ScrollController controller,
+      {Widget? headWidget}) {
     List<Widget> children = [];
-    for (int i = 0; i < 20; i++) {
-      children.add(ListTile(title: Text('$title $i')));
+    for (int i = 0; i < itemCount; i++) {
+      children.add(buildDataItem(i));
     }
-    return FitSystemScreenshotWidget(
+    Widget result = ListView(
       key: key,
       controller: controller,
-      child: ListView(controller: controller, children: children),
+      children: children,
     );
-  }
-
-  @override
-  void onLifecycleEvent(LifecycleEvent event) {
-    if (event == LifecycleEvent.active) {
-      attachController();
-    } else if (event == LifecycleEvent.inactive) {
-      FitSystemScreenshotWidgetState? currentState =
-          shotKeyList[index].currentState;
-      if (currentState == null) return;
-      currentState.detach();
+    if (headWidget != null) {
+      result = Column(
+        children: [headWidget, Expanded(child: result)],
+      );
     }
+    return result;
   }
 
-  void attachController() {
-    //等待Element树构建
-    Future.delayed(Duration(milliseconds: 300), () {
-      FitSystemScreenshotWidgetState? currentState =
-          shotKeyList[index].currentState;
-      if (currentState == null) return;
-      currentState.attach();
-    });
+  Widget buildDataItem(int index) {
+    return Container(
+      height: itemHeight,
+      alignment: Alignment.center,
+      color: colorList[index % colorList.length],
+      child: Text('Column Index = $index', style: TextStyle(fontSize: 18)),
+    );
   }
 }

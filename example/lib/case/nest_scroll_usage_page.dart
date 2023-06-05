@@ -1,6 +1,6 @@
-import 'package:fit_system_screenshot/fit_system_screenshot_widget.dart';
+import 'package:fit_system_screenshot/fit_system_screenshot.dart';
+import 'package:fit_system_screenshot_example/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:lifecycle/lifecycle.dart';
 
 class NestScrollUsagePage extends StatefulWidget {
   const NestScrollUsagePage({Key? key}) : super(key: key);
@@ -9,13 +9,35 @@ class NestScrollUsagePage extends StatefulWidget {
   State<NestScrollUsagePage> createState() => _NestScrollUsagePageState();
 }
 
-class _NestScrollUsagePageState extends State<NestScrollUsagePage>
-    with LifecycleAware, LifecycleMixin {
+class _NestScrollUsagePageState extends State<NestScrollUsagePage> {
+  final int itemCount = 10;
+  final double itemHeight = 120;
+  final double headHeight = 200;
+
+  Dispose? screenShotDispose;
+  final GlobalKey<NestedScrollViewState> scrollAreaKey =
+      GlobalKey<NestedScrollViewState>();
   final ScrollController scrollController = ScrollController();
-  final GlobalKey<FitSystemScreenshotWidgetState> shotKey = GlobalKey();
+
+  @override
+  void initState() {
+    screenShotDispose = fitSystemScreenshot
+        .attachToPage(scrollAreaKey, scrollController, (offset) {
+      NestedScrollViewState? state = scrollAreaKey.currentState;
+      if (offset <= headHeight) {
+        state?.outerController.jumpTo(offset);
+      } else {
+        state?.innerController.jumpTo(offset - headHeight);
+      }
+    });
+    fitSystemScreenshot.updateScrollLength(itemHeight * itemCount + headHeight);
+    fitSystemScreenshot.updateScrollPosition(0);
+    super.initState();
+  }
 
   @override
   void dispose() {
+    screenShotDispose?.call();
     this.scrollController.dispose();
     super.dispose();
   }
@@ -24,38 +46,48 @@ class _NestScrollUsagePageState extends State<NestScrollUsagePage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('NestedScrollView Usage')),
-      body: FitSystemScreenshotWidget(
-        key: shotKey,
+      body: NestedScrollView(
+        key: scrollAreaKey,
         controller: scrollController,
-        child: NestedScrollView(
-          controller: scrollController,
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return [SliverToBoxAdapter(child: FlutterLogo(size: 200))];
-          },
-          body: ListView.builder(
-            itemBuilder: (context, index) {
-              return ListTile(title: Text('Item $index'));
-            },
-            itemCount: 20,
-          ),
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return [
+            SliverToBoxAdapter(
+              child: GestureDetector(
+                onTap: () {
+                  NestedScrollViewState? state = scrollAreaKey.currentState;
+                  state?.outerController.animateTo(
+                    headHeight,
+                    duration: Duration(seconds: 1),
+                    curve: Curves.linear,
+                  );
+                  Future.delayed(Duration(seconds: 1), () {
+                    state?.innerController.animateTo(
+                      itemHeight * itemCount,
+                      duration: Duration(seconds: 3),
+                      curve: Curves.linear,
+                    );
+                  });
+                },
+                child: FlutterLogo(size: headHeight),
+              ),
+            )
+          ];
+        },
+        body: ListView.builder(
+          itemExtent: itemHeight,
+          itemCount: itemCount,
+          itemBuilder: (context, index) => buildDataItem(index),
         ),
       ),
     );
   }
 
-  @override
-  void onLifecycleEvent(LifecycleEvent event) {
-    if (event == LifecycleEvent.active) {
-      //等待Element树构建
-      Future.delayed(Duration.zero, () {
-        FitSystemScreenshotWidgetState? currentState = shotKey.currentState;
-        if (currentState == null) return;
-        currentState.attach();
-      });
-    } else if (event == LifecycleEvent.inactive) {
-      FitSystemScreenshotWidgetState? currentState = shotKey.currentState;
-      if (currentState == null) return;
-      currentState.detach();
-    }
+  Widget buildDataItem(int i) {
+    return Container(
+      height: itemHeight,
+      alignment: Alignment.center,
+      color: colorList[i % colorList.length],
+      child: Text('Column Index = $i', style: TextStyle(fontSize: 18)),
+    );
   }
 }
