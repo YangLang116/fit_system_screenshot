@@ -17,7 +17,7 @@ import io.flutter.plugin.common.MethodChannel;
 
 public class FitScreenShotManager {
 
-    private static final String TAG = "FitScreenShotHelper";
+    private static final String TAG = "FitScreenShotManager";
     private static final String METHOD_CHANNEL_NAME = "fit.system.screenshot.method";
     private static final String EVENT_CHANNEL_NAME = "fit.system.screenshot.event";
 
@@ -38,9 +38,9 @@ public class FitScreenShotManager {
         this.methodChannel = new MethodChannel(messenger, METHOD_CHANNEL_NAME);
         this.methodChannel.setMethodCallHandler((call, result) -> {
             String methodName = call.method;
-            Log.d(TAG, "onMethodCall: " + methodName);
             if (TextUtils.equals("updateScrollArea", methodName) && this.touchParentView != null) {
                 final Map<String, Integer> args = (Map<String, Integer>) call.arguments;
+                Log.d(TAG, "updateScrollArea args: " + args);
                 ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) this.touchParentView.getLayoutParams();
                 layoutParams.leftMargin = args.get("left");
                 layoutParams.topMargin = args.get("top");
@@ -50,11 +50,13 @@ public class FitScreenShotManager {
                 result.success(true);
             } else if (TextUtils.equals("updateScrollLength", methodName) && this.scrollView != null) {
                 final Map<String, Double> args = (Map<String, Double>) call.arguments;
+                Log.d(TAG, "updateScrollLength args: " + args);
                 double length = args.get("length");
                 this.scrollView.updateScrollLength(length);
                 result.success(true);
             } else if (TextUtils.equals("updateScrollPosition", methodName) && this.scrollView != null) {
                 final Map<String, Double> args = (Map<String, Double>) call.arguments;
+                Log.d(TAG, "updateScrollPosition args: " + args);
                 int position = (int) Math.ceil(args.get("position"));
                 this.scrollView.post(() -> scrollView.scrollToWithoutCallback(position));
                 result.success(true);

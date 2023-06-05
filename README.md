@@ -22,14 +22,14 @@ screenShotDispose = fitSystemScreenshot.attachToPage(scrollAreaKey, scrollContro
 });
 ```
 
-2、更新滚动内容长度
-```dart
-fitSystemScreenshot.updateScrollLength(contentLength);
-```
-
-3、页面退出，释放对象
+2、页面退出，释放对象
 ```dart
 screenShotDispose?.call();
+```
+
+3、更新滚动内容长度(可选)
+```dart
+fitSystemScreenshot.updateScrollLength(contentLength);
 ```
 
 4、更新截屏开始位置(可选)

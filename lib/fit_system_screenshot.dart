@@ -44,24 +44,48 @@ class _FitSystemScreenshot {
 
   ///页面展示到前台时调用【注意当A页面打开B页面，再退回到A页面时，A页面需要重新调用该方法】
   ///返回一个函数，释放当前页面截屏资源
-  Dispose attachToPage(
-    GlobalKey scrollAreaKey,
+  Dispose attachToPage<S extends State<StatefulWidget>>(
+    GlobalKey<S> scrollAreaKey,
     ScrollController scrollController,
     OnScreenShotScroll onScreenShotScroll,
   ) {
     if (!Platform.isAndroid) return () {};
+    bool isNestedScrollView = S.toString() == 'NestedScrollViewState';
+    double currentScrollLength = 0;
+    final refreshScrollLength = () {
+      double newLength = 0;
+      if (isNestedScrollView) {
+        NestedScrollViewState? nestedState =
+            scrollAreaKey.currentState as NestedScrollViewState?;
+        if (nestedState == null) return;
+        ScrollPosition innerPos = nestedState.innerController.position;
+        newLength += (innerPos.viewportDimension + innerPos.maxScrollExtent);
+        ScrollPosition outPos = nestedState.outerController.position;
+        newLength += outPos.maxScrollExtent;
+      } else {
+        ScrollPosition position = scrollController.position;
+        newLength = position.viewportDimension + position.maxScrollExtent;
+      }
+      if (currentScrollLength == newLength) return;
+      currentScrollLength = newLength;
+      updateScrollLength(newLength);
+    };
     final onScrollListener = () {
-      if (isScreenShot) return;
-      updateScrollPosition(scrollController.offset);
+      refreshScrollLength();
+      if (!isScreenShot) updateScrollPosition(scrollController.offset);
     };
     SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
       this.onScreenShotScroll = onScreenShotScroll;
       updateScrollAreaWithKey(scrollAreaKey);
+      refreshScrollLength();
+      updateScrollPosition(scrollController.offset);
       scrollController.position.addListener(onScrollListener);
     });
     return () {
       this.onScreenShotScroll = null;
-      scrollController.position.removeListener(onScrollListener);
+      if (scrollController.hasClients) {
+        scrollController.position.removeListener(onScrollListener);
+      }
     };
   }
 

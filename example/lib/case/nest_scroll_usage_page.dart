@@ -21,8 +21,8 @@ class _NestScrollUsagePageState extends State<NestScrollUsagePage> {
 
   @override
   void initState() {
-    screenShotDispose = fitSystemScreenshot
-        .attachToPage(scrollAreaKey, scrollController, (offset) {
+    screenShotDispose = fitSystemScreenshot.attachToPage<NestedScrollViewState>(
+        scrollAreaKey, scrollController, (offset) {
       NestedScrollViewState? state = scrollAreaKey.currentState;
       if (offset <= headHeight) {
         state?.outerController.jumpTo(offset);
@@ -30,8 +30,6 @@ class _NestScrollUsagePageState extends State<NestScrollUsagePage> {
         state?.innerController.jumpTo(offset - headHeight);
       }
     });
-    fitSystemScreenshot.updateScrollLength(itemHeight * itemCount + headHeight);
-    fitSystemScreenshot.updateScrollPosition(0);
     super.initState();
   }
 

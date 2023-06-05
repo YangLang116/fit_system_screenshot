@@ -25,8 +25,6 @@ class _CustomScrollUsagePageState extends State<CustomScrollUsagePage> {
         .attachToPage(scrollAreaKey, scrollController, (offset) {
       scrollController.jumpTo(offset);
     });
-    fitSystemScreenshot.updateScrollLength(getContentLength());
-    fitSystemScreenshot.updateScrollPosition(0);
     super.initState();
   }
 

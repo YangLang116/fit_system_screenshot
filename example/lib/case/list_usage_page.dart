@@ -23,8 +23,6 @@ class _ListUsagePageState extends State<ListUsagePage> {
         .attachToPage(scrollAreaKey, scrollController, (offset) {
       scrollController.jumpTo(offset);
     });
-    fitSystemScreenshot.updateScrollLength(itemHeight * itemCount);
-    fitSystemScreenshot.updateScrollPosition(0);
     super.initState();
   }
 

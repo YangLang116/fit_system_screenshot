@@ -24,8 +24,6 @@ class _ColumnUsagePageState extends State<ColumnUsagePage> {
         .attachToPage(scrollAreaKey, scrollController, (offset) {
       scrollController.jumpTo(offset);
     });
-    fitSystemScreenshot.updateScrollLength(itemHeight * itemCount);
-    fitSystemScreenshot.updateScrollPosition(0);
     super.initState();
   }
 

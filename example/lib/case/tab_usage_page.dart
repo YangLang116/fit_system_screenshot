@@ -1,7 +1,6 @@
 import 'package:fit_system_screenshot/fit_system_screenshot.dart';
 import 'package:fit_system_screenshot_example/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 
 class TabUsagePage extends StatefulWidget {
   const TabUsagePage({Key? key}) : super(key: key);
@@ -33,11 +32,6 @@ class _TabUsagePageState extends State<TabUsagePage> {
     screenShotDispose = fitSystemScreenshot.attachToPage(
         scrollAreaKeyList[index], scrollControllerList[index], (offset) {
       scrollControllerList[index].jumpTo(offset);
-    });
-    SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
-      fitSystemScreenshot
-          .updateScrollLength(tabItemCountList[index] * itemHeight);
-      fitSystemScreenshot.updateScrollPosition(offset);
     });
   }
 
