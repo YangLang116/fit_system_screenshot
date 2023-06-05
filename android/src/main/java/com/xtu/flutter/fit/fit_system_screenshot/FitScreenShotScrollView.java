@@ -1,70 +1,55 @@
 package com.xtu.flutter.fit.fit_system_screenshot;
 
 import android.content.Context;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 public class FitScreenShotScrollView extends ScrollView {
-
-    private static final String TAG = "FitScreenShotScrollView";
-
-    private int currentLength;
-    private final TextView contentView;
+    private final View contentView;
+    private int contentViewHeight = 0;
+    private boolean needCallBack = true;
     private ScrollListener scrollViewListener;
 
-    public FitScreenShotScrollView(Context context) {
+    FitScreenShotScrollView(Context context) {
         super(context);
         setOverScrollMode(View.OVER_SCROLL_NEVER);
         setVerticalScrollBarEnabled(false);
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        int screenWidth = displayMetrics.widthPixels;
-        int screenHeight = displayMetrics.heightPixels;
-        this.contentView = new TextView(context);
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 500; i++) {
-            sb.append("item " + i).append("\n");
-        }
-        this.contentView.setText(sb.toString());
-        this.contentView.setWidth(screenWidth);
-        this.contentView.setHeight(this.currentLength = screenHeight); //让控件支持滑动
-        addView(contentView);
+        LinearLayout ll = new LinearLayout(context);
+        ll.setOrientation(LinearLayout.VERTICAL);
+        this.contentView = new View(context);
+        ll.addView(this.contentView, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        addView(ll, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
-    public void setScrollViewListener(ScrollListener scrollViewListener) {
+    void setScrollViewListener(@NonNull ScrollListener scrollViewListener) {
         this.scrollViewListener = scrollViewListener;
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent ev) {
-        Log.d(TAG, "onTouchEvent: " + ev);
-        return super.onTouchEvent(ev);
-    }
-
-    @Override
-    public void scrollTo(int x, int y) {
-        Log.d(TAG, "scrollTo: " + y);
-        super.scrollTo(x, y);
-    }
-
-    @Override
-    public void scrollBy(int x, int y) {
-        Log.d(TAG, "scrollBy: " + y);
-        super.scrollBy(x, y);
     }
 
     @Override
     protected void onScrollChanged(int l, int t, int oldL, int oldT) {
         super.onScrollChanged(l, t, oldL, oldT);
-        if (scrollViewListener != null) scrollViewListener.onScroll(t);
+        if (scrollViewListener != null && needCallBack) scrollViewListener.onScroll(t);
     }
 
-    public void updateScrollLength(double maxLength) {
-        if (this.currentLength == maxLength) return;
-        this.contentView.setHeight(this.currentLength = (int) maxLength);
+    void updateScrollLength(double scrollHeight) {
+        if (this.contentViewHeight == scrollHeight) return;
+        this.contentViewHeight = (int) scrollHeight;
+        ViewGroup.LayoutParams layoutParams = contentView.getLayoutParams();
+        layoutParams.height = this.contentViewHeight;
+        this.contentView.setLayoutParams(layoutParams);
+    }
+
+    void scrollToWithoutCallback(int position) {
+        this.needCallBack = false;
+        scrollTo(0, position);
+        this.needCallBack = true;
     }
 
     public interface ScrollListener {
