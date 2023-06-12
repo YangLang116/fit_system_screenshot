@@ -58,7 +58,7 @@ public class FitScreenShotManager {
                 final Map<String, Double> args = (Map<String, Double>) call.arguments;
                 Log.d(TAG, "updateScrollPosition args: " + args);
                 int position = (int) Math.ceil(args.get("position"));
-                this.scrollView.post(() -> scrollView.scrollToWithoutCallback(position));
+                this.scrollView.scrollToWithoutCallback(position);
                 result.success(true);
             }
         });
