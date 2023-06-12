@@ -3,6 +3,7 @@ import 'package:fit_system_screenshot_example/case/column_usage_page.dart';
 import 'package:fit_system_screenshot_example/case/custom_scroll_usage_page.dart';
 import 'package:fit_system_screenshot_example/case/list_usage_page.dart';
 import 'package:fit_system_screenshot_example/case/nest_scroll_usage_page.dart';
+import 'package:fit_system_screenshot_example/case/net_usage_page.dart';
 import 'package:fit_system_screenshot_example/case/tab_usage_page.dart';
 import 'package:flutter/material.dart';
 
@@ -42,6 +43,7 @@ class _MyAppState extends State<MyApp> {
         'nest_scroll_usage_page': (context) => NestScrollUsagePage(),
         'custom_scroll_usage_page': (context) => CustomScrollUsagePage(),
         'tab_usage_page': (context) => TabUsagePage(),
+        'net_usage_page': (context) => NetUsagePage(),
       },
     );
   }
@@ -97,6 +99,15 @@ class DisplayPage extends StatelessWidget {
               },
               child: Text(
                 'Tab Usage',
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pushNamed(context, 'net_usage_page');
+              },
+              child: Text(
+                'Net Usage',
                 style: TextStyle(fontSize: 18),
               ),
             )

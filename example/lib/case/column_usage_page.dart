@@ -11,19 +11,17 @@ class ColumnUsagePage extends StatefulWidget {
 }
 
 class _ColumnUsagePageState extends State<ColumnUsagePage> {
-  final int itemCount = 10;
-  final double itemHeight = 120;
-
   Dispose? screenShotDispose;
   final GlobalKey scrollAreaKey = GlobalKey();
   final ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
-    screenShotDispose = fitSystemScreenshot
-        .attachToPage(scrollAreaKey, scrollController, (offset) {
-      scrollController.jumpTo(offset);
-    });
+    screenShotDispose = fitSystemScreenshot.attachToPage(
+      scrollAreaKey,
+      scrollController,
+      scrollController.jumpTo,
+    );
     super.initState();
   }
 
@@ -44,7 +42,7 @@ class _ColumnUsagePageState extends State<ColumnUsagePage> {
 
   Widget buildScrollArea() {
     List<Widget> children = [];
-    for (int i = 0; i < itemCount; i++) {
+    for (int i = 0; i < 12; i++) {
       children.add(buildDataItem(i));
     }
     return SingleChildScrollView(
@@ -64,7 +62,7 @@ class _ColumnUsagePageState extends State<ColumnUsagePage> {
 
   Widget buildDataItem(int i) {
     return Container(
-      height: itemHeight,
+      height: 120,
       alignment: Alignment.center,
       color: colorList[i % colorList.length],
       child: Text('Column Index = $i', style: TextStyle(fontSize: 18)),

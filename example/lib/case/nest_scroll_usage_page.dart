@@ -10,8 +10,6 @@ class NestScrollUsagePage extends StatefulWidget {
 }
 
 class _NestScrollUsagePageState extends State<NestScrollUsagePage> {
-  final int itemCount = 10;
-  final double itemHeight = 120;
   final double headHeight = 200;
 
   Dispose? screenShotDispose;
@@ -22,14 +20,17 @@ class _NestScrollUsagePageState extends State<NestScrollUsagePage> {
   @override
   void initState() {
     screenShotDispose = fitSystemScreenshot.attachToPage<NestedScrollViewState>(
-        scrollAreaKey, scrollController, (offset) {
-      NestedScrollViewState? state = scrollAreaKey.currentState;
-      if (offset <= headHeight) {
-        state?.outerController.jumpTo(offset);
-      } else {
-        state?.innerController.jumpTo(offset - headHeight);
-      }
-    });
+      scrollAreaKey,
+      scrollController,
+      (offset) {
+        NestedScrollViewState? state = scrollAreaKey.currentState;
+        if (offset <= headHeight) {
+          state?.outerController.jumpTo(offset);
+        } else {
+          state?.innerController.jumpTo(offset - headHeight);
+        }
+      },
+    );
     super.initState();
   }
 
@@ -48,32 +49,11 @@ class _NestScrollUsagePageState extends State<NestScrollUsagePage> {
         key: scrollAreaKey,
         controller: scrollController,
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return [
-            SliverToBoxAdapter(
-              child: GestureDetector(
-                onTap: () {
-                  NestedScrollViewState? state = scrollAreaKey.currentState;
-                  state?.outerController.animateTo(
-                    headHeight,
-                    duration: Duration(seconds: 1),
-                    curve: Curves.linear,
-                  );
-                  Future.delayed(Duration(seconds: 1), () {
-                    state?.innerController.animateTo(
-                      itemHeight * itemCount,
-                      duration: Duration(seconds: 3),
-                      curve: Curves.linear,
-                    );
-                  });
-                },
-                child: FlutterLogo(size: headHeight),
-              ),
-            )
-          ];
+          return [SliverToBoxAdapter(child: FlutterLogo(size: headHeight))];
         },
         body: ListView.builder(
-          itemExtent: itemHeight,
-          itemCount: itemCount,
+          itemExtent: 120,
+          itemCount: 10,
           itemBuilder: (context, index) => buildDataItem(index),
         ),
       ),
@@ -82,7 +62,6 @@ class _NestScrollUsagePageState extends State<NestScrollUsagePage> {
 
   Widget buildDataItem(int i) {
     return Container(
-      height: itemHeight,
       alignment: Alignment.center,
       color: colorList[i % colorList.length],
       child: Text('Column Index = $i', style: TextStyle(fontSize: 18)),

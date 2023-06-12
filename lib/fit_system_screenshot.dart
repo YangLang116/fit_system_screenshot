@@ -42,7 +42,8 @@ class _FitSystemScreenshot {
     this._subscription?.cancel();
   }
 
-  ///页面展示到前台时调用【注意当A页面打开B页面，再退回到A页面时，A页面需要重新调用该方法】
+  ///当首屏页面数据加载完成后调用
+  ///注意: 当A页面打开B页面，再退回到A页面时，A页面需要重新调用该方法
   ///返回一个函数，释放当前页面截屏资源
   Dispose attachToPage<S extends State<StatefulWidget>>(
     GlobalKey<S> scrollAreaKey,

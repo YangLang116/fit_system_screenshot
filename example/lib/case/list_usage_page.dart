@@ -10,19 +10,17 @@ class ListUsagePage extends StatefulWidget {
 }
 
 class _ListUsagePageState extends State<ListUsagePage> {
-  final int itemCount = 10;
-  final double itemHeight = 200;
-
   Dispose? screenShotDispose;
   final GlobalKey scrollAreaKey = GlobalKey();
   final ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
-    screenShotDispose = fitSystemScreenshot
-        .attachToPage(scrollAreaKey, scrollController, (offset) {
-      scrollController.jumpTo(offset);
-    });
+    screenShotDispose = fitSystemScreenshot.attachToPage(
+      scrollAreaKey,
+      scrollController,
+      scrollController.jumpTo,
+    );
     super.initState();
   }
 
@@ -45,10 +43,10 @@ class _ListUsagePageState extends State<ListUsagePage> {
     return ListView.builder(
       key: scrollAreaKey,
       controller: scrollController,
-      itemCount: itemCount,
+      itemCount: 10,
       itemBuilder: (context, index) {
         return Container(
-          height: itemHeight,
+          height: 200,
           color: colorList[index % colorList.length],
           alignment: Alignment.center,
           child: Text('List Index = $index', style: TextStyle(fontSize: 18)),

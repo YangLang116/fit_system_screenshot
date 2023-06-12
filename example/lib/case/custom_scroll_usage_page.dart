@@ -14,23 +14,14 @@ class _CustomScrollUsagePageState extends State<CustomScrollUsagePage> {
   final ScrollController scrollController = ScrollController();
   final GlobalKey scrollAreaKey = GlobalKey();
 
-  final int listCount = 15;
-  final int gridCount = 6;
-  final double itemHeight = 50;
-  final int crossAxisCount = 3;
-
   @override
   void initState() {
-    screenShotDispose = fitSystemScreenshot
-        .attachToPage(scrollAreaKey, scrollController, (offset) {
-      scrollController.jumpTo(offset);
-    });
+    screenShotDispose = fitSystemScreenshot.attachToPage(
+      scrollAreaKey,
+      scrollController,
+      scrollController.jumpTo,
+    );
     super.initState();
-  }
-
-  double getContentLength() {
-    return (listCount * itemHeight) +
-        ((gridCount / crossAxisCount).ceil() * itemHeight);
   }
 
   @override
@@ -51,15 +42,16 @@ class _CustomScrollUsagePageState extends State<CustomScrollUsagePage> {
           SliverList(
             delegate: SliverChildBuilderDelegate((context, index) {
               return buildItem('List Item ', index);
-            }, childCount: listCount),
+            }, childCount: 12),
           ),
           SliverGrid(
-            delegate: SliverChildBuilderDelegate((context, index) {
-              return buildItem('Grid Item ', index);
-            }, childCount: gridCount),
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => buildItem('Grid Item ', index),
+              childCount: 15,
+            ),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossAxisCount,
-              mainAxisExtent: itemHeight,
+              crossAxisCount: 2,
+              mainAxisExtent: 50,
             ),
           ),
         ],
@@ -68,20 +60,10 @@ class _CustomScrollUsagePageState extends State<CustomScrollUsagePage> {
   }
 
   Widget buildItem(String prefix, int index) {
-    return GestureDetector(
-      onTap: () {
-        scrollController.animateTo(
-          getContentLength(),
-          duration: Duration(seconds: 3),
-          curve: Curves.linear,
-        );
-      },
-      child: Container(
-        height: itemHeight,
-        alignment: Alignment.center,
-        color: colorList[index % colorList.length],
-        child: Text('$prefix$index'),
-      ),
+    return Container(
+      alignment: Alignment.center,
+      color: colorList[index % colorList.length],
+      child: Text('$prefix$index'),
     );
   }
 }
