@@ -18,6 +18,12 @@ class FirstTabPageState extends State<FirstTabPage>
   final GlobalKey scrollAreaKey = GlobalKey();
   final ScrollController scrollController = new ScrollController();
 
+  @override
+  void initState() {
+    refreshScreenShot();
+    super.initState();
+  }
+
   void refreshScreenShot() {
     refreshDispose = fitSystemScreenshot.attachToPage(
       scrollAreaKey,

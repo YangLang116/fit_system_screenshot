@@ -51,7 +51,6 @@ class _CustomScrollUsagePageState extends State<CustomScrollUsagePage> {
             ),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              mainAxisExtent: 50,
             ),
           ),
         ],
@@ -62,6 +61,7 @@ class _CustomScrollUsagePageState extends State<CustomScrollUsagePage> {
   Widget buildItem(String prefix, int index) {
     return Container(
       alignment: Alignment.center,
+      padding: EdgeInsets.symmetric(vertical: 20),
       color: colorList[index % colorList.length],
       child: Text('$prefix$index'),
     );
